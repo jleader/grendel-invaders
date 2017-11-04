@@ -673,9 +673,9 @@ function drawBottomHud() {
   ctx.drawImage(spriteSheetImg, player.clipRect.x, player.clipRect.y, player.clipRect.w,
                  player.clipRect.h, 45, CANVAS_HEIGHT - 23, player.clipRect.w * 0.5,
                  player.clipRect.h * 0.5);
-  fillText('CREDIT: ', CANVAS_WIDTH - 115, CANVAS_HEIGHT - 7.5);
+  // fillText('CREDIT: Quinn Leader', CANVAS_WIDTH - 210, CANVAS_HEIGHT - 7.5);
   fillCenteredText('SCORE: ' + player.score, CANVAS_WIDTH/2, 20);
-  fillBlinkingText('00', CANVAS_WIDTH - 25, CANVAS_HEIGHT - 7.5, TEXT_BLINK_FREQ);
+  // fillBlinkingText('00', CANVAS_WIDTH - 25, CANVAS_HEIGHT - 7.5, TEXT_BLINK_FREQ);
 }
 
 function drawAliens(resized) {
@@ -693,8 +693,9 @@ function drawGame(resized) {
 }
 
 function drawStartScreen() {
-  fillCenteredText("Space Invaders", CANVAS_WIDTH/2, CANVAS_HEIGHT/2.75, '#FFFFFF', 36);
-  fillBlinkingText("Press enter to play!", CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 500, '#FFFFFF', 36);
+  fillCenteredText("Grendel Invaders", CANVAS_WIDTH/2, CANVAS_HEIGHT/2.75, '#FFFFFF', 36);
+  fillCenteredText("by Quinn Leader", CANVAS_WIDTH/2, CANVAS_HEIGHT/2, '#FFFFFF', 24);
+  fillBlinkingText("Press enter to play!", CANVAS_WIDTH/2, CANVAS_HEIGHT/1.5, 500, '#FFFFFF', 36);
 }
 
 function animate() {
