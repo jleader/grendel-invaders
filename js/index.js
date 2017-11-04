@@ -194,7 +194,6 @@ var BaseSprite = Class.extend({
     this.position = new Point2D(x, y);
     this.scale = new Point2D(1, 1);
     this.bounds = new Rect(x, y, this.img.width, this.img.height);
-    this.doLogic = true;
   },
 
   update: function(dt) { },
