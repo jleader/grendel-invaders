@@ -655,6 +655,7 @@ function fillText(text, x, y, color, fontSize) {
 }
 
 function fillCenteredText(text, x, y, color, fontSize) {
+  if (typeof fontSize !== 'undefined') ctx.font = fontSize + 'px Play';
   var metrics = ctx.measureText(text);
   fillText(text, x - metrics.width/2, y, color, fontSize);
 }
