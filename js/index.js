@@ -541,6 +541,7 @@ function initGame() {
 
 function setupAlienFormation() {
   alienCount = 0;
+  var words = ["Now", "is", "the", "time", "for", "all", "good", "men", "to", "come", "to", "the", "aid", "of", "their", "country"];
   for (var i = 0, len = 5 * 11; i < len; i++) {
     var gridX = (i % 11);
     var gridY = Math.floor(i / 11);
@@ -553,7 +554,7 @@ function setupAlienFormation() {
 //      case 4: clipRects = ALIEN_TOP_ROW; break;
 //    }
     word = "WORD";
-    aliens.push(new Enemy(word, (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
+    aliens.push(new Enemy(words[i % words.length], (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
     alienCount++;
   }
 }
