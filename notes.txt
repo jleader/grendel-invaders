@@ -8,10 +8,11 @@ Class:
   Point2D:
   Rect:
   BaseSprite:
-    Bullet:
-    SheetSprite:
-      Player:
-      Enemy:
+    ImgSprite:
+      Bullet:
+      SheetSprite:
+        Player:
+        Enemy:
   ParticleExplosion:
 
 Attributes & Methods:

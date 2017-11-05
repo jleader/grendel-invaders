@@ -92,6 +92,7 @@ var LEFT_KEY = 37;
 var RIGHT_KEY = 39;
 var SHOOT_KEY1 = 88; // X
 var SHOOT_KEY2 = 32; // <space>
+var SHOOT_KEY3 = 38; // <up-arrow>
 var TEXT_BLINK_FREQ = 500;
 var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 32 };
 var ALIEN_BOTTOM_ROW = [ { x: 0, y: 0, w: 51, h: 34 }, { x: 0, y: 102, w: 51, h: 34 }];
@@ -189,17 +190,26 @@ var hasGameStarted = false;
 //
 // ###################################################################
 var BaseSprite = Class.extend({
-  init: function(img, x, y) {
-    this.img = img;
+  init: function(x, y, w, h, bounds, scale) {
     this.position = new Point2D(x, y);
-    this.scale = new Point2D(1, 1);
-    this.bounds = new Rect(x, y, this.img.width, this.img.height);
+    this.dimensions = new Point2D(w, h);
+    this.scale = scale;
+    this.bounds = bounds;
   },
 
   update: function(dt) { },
 
   _updateBounds: function() {
-     this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.img.width * this.scale.x), ~~(0.5 + this.img.height * this.scale.y));
+     this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.dimensions.x * this.scale.x), ~~(0.5 + this.dimensions.y * this.scale.y));
+  },
+
+  draw: function(resized) { }
+});
+
+var ImgSprite = BaseSprite.extend({
+  init: function(img, x, y) {
+    this._super(x, y, img.width, img.height, new Rect(x, y, img.width, img.height), new Point2D(1, 1));
+    this.img = img;
   },
 
   _drawImage: function() {
@@ -213,7 +223,7 @@ var BaseSprite = Class.extend({
   }
 });
 
-var SheetSprite = BaseSprite.extend({
+var SheetSprite = ImgSprite.extend({
   init: function(sheetImg, clipRect, x, y) {
     this._super(sheetImg, x, y);
     this.clipRect = clipRect;
@@ -270,7 +280,7 @@ var Player = SheetSprite.extend({
       this.xVel = 175;
     } else this.xVel = 0;
 
-    if (wasKeyPressed(SHOOT_KEY1) || wasKeyPressed(SHOOT_KEY2)) {
+    if (wasKeyPressed(SHOOT_KEY1) || wasKeyPressed(SHOOT_KEY2) || wasKeyPressed(SHOOT_KEY3)) {
       if (this.bulletDelayAccumulator > 0.5) {
         this.shoot();
         this.bulletDelayAccumulator = 0;
@@ -315,7 +325,7 @@ var Player = SheetSprite.extend({
   }
 });
 
-var Bullet = BaseSprite.extend({
+var Bullet = ImgSprite.extend({
   init: function(x, y, direction, speed) {
     this._super(bulletImg, x, y);
     this.direction = direction;
