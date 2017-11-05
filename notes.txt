@@ -3,3 +3,66 @@ Space Invaders html5 implementations:
   https://github.com/arcadeJHS/HTML5-Space-Invaders
   https://github.com/ozelentok/SpaceInvaders
   https://github.com/plissken2013es/spaceInvaders8k
+
+Class:
+  Point2D:
+  Rect:
+  BaseSprite:
+    Bullet:
+    SheetSprite:
+      Player:
+      Enemy:
+  ParticleExplosion:
+
+Attributes & Methods:
+  Point2D:
+    x, y
+    init(x, y)
+    set(x, y)
+  Rect:
+    x, y, w, h
+    init(x, y, w, h)
+    set(x, y, w, h)
+  BaseSprite:
+    img
+    position: Point2D
+    scale: Point2D
+    bounds: Rect
+    init(img, x, y)
+    update(dt)
+    _updateBounds()
+    _drawImage()
+    draw(resized)
+  SheetSprite:
+    clipRect
+    init(sheetImg, clipRect, x, y)
+    update(dt)
+    _updateBounds()
+    _drawImage()
+    draw(resized)
+  Player:
+    lives, xVel, bullets, bulletDelayAccumulator, score
+    init()
+    reset()
+    shoot()
+    handleInput()
+    updateBullets(dt)
+    update(dt)
+    draw(resized)
+  Bullet:
+    direction, speed, alive
+    init(x, y, direction, speed)
+    update(dt)
+    draw(resized)
+  Enemy:
+    clipRects, alive, onFirstState, stepDelay, stepAccumulator, doShoot, bullet
+    init(clipRects, x, y)
+    toggleFrame()
+    shoot()
+    update(dt)
+    draw(resized)
+  ParticleExplosion:
+    particlePool, particles
+    init()
+    draw()
+    createExplosion(x, y, color, number, width, height, spd, grav, lif)
