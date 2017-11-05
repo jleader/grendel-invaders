@@ -1,0 +1,5 @@
+Space Invaders html5 implementations:
+  https://codepen.io/anon/pen/vWGVVw
+  https://github.com/arcadeJHS/HTML5-Space-Invaders
+  https://github.com/ozelentok/SpaceInvaders
+  https://github.com/plissken2013es/spaceInvaders8k
