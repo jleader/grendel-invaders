@@ -345,7 +345,7 @@ var Enemy = SheetSprite.extend({
     this.onFirstState = true;
     this.stepDelay = 1; // try 2 secs to start with...
     this.stepAccumulator = 0;
-    this.doShoot - false;
+    this.doShoot = false;
     this.bullet = null;
   },
 
