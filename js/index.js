@@ -190,9 +190,8 @@ var hasGameStarted = false;
 //
 // ###################################################################
 var BaseSprite = Class.extend({
-  init: function(x, y, w, h, bounds, scale) {
+  init: function(x, y, bounds, scale) {
     this.position = new Point2D(x, y);
-    this.dimensions = new Point2D(w, h);
     this.scale = scale;
     this.bounds = bounds;
   },
@@ -200,15 +199,38 @@ var BaseSprite = Class.extend({
   update: function(dt) { },
 
   _updateBounds: function() {
-     this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.dimensions.x * this.scale.x), ~~(0.5 + this.dimensions.y * this.scale.y));
+     this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.bounds.w * this.scale.x), ~~(0.5 + this.bounds.h * this.scale.y));
   },
 
   draw: function(resized) { }
 });
 
+var TextSprite = BaseSprite.extend({
+  init: function(word, x, y, fontSize, fontColor) {
+    ctx.font = fontSize + 'px Play';
+    var metrics = ctx.measureText(word);
+    this._super(x, y, new Rect(x, y, metrics.width, metrics.height), new Point2D(1, 1));
+    this.word = word;
+    this.fontSize = fontSize;
+    this.fontColor = fontColor;
+  },
+
+  _drawText: function() {
+    ctx.font = this.fontSize + 'px Play';
+    ctx.fillStyle = this.fontColor;
+    ctx.fillText(this.word, this.position.x, this.position.y);
+  },
+
+  draw: function(resized) {
+    this._updateBounds();
+
+    this._drawText();
+  }
+});
+
 var ImgSprite = BaseSprite.extend({
   init: function(img, x, y) {
-    this._super(x, y, img.width, img.height, new Rect(x, y, img.width, img.height), new Point2D(1, 1));
+    this._super(x, y, new Rect(x, y, img.width, img.height), new Point2D(1, 1));
     this.img = img;
   },
 
@@ -346,11 +368,10 @@ var Bullet = ImgSprite.extend({
   }
 });
 
-var Enemy = SheetSprite.extend({
-  init: function(clipRects, x, y) {
-    this._super(spriteSheetImg, clipRects[0], x, y);
-    this.clipRects = clipRects;
-    this.scale.set(0.5, 0.5);
+var Enemy = TextSprite.extend({
+  init: function(word, x, y) {
+    this._super(word, x, y, 12, "white");
+    // this.scale.set(0.5, 0.5);
     this.alive = true;
     this.onFirstState = true;
     this.stepDelay = 1; // try 2 secs to start with...
@@ -359,10 +380,10 @@ var Enemy = SheetSprite.extend({
     this.bullet = null;
   },
 
-  toggleFrame: function() {
-    this.onFirstState = !this.onFirstState;
-    this.clipRect = (this.onFirstState) ? this.clipRects[0] : this.clipRects[1];
-  },
+  // toggleFrame: function() {
+  //   this.onFirstState = !this.onFirstState;
+  //   this.clipRect = (this.onFirstState) ? this.clipRects[0] : this.clipRects[1];
+  // },
 
   shoot: function() {
     this.bullet = new Bullet(this.position.x, this.position.y + this.bounds.w/2, -1, 500);
@@ -386,7 +407,7 @@ var Enemy = SheetSprite.extend({
         this.doShoot = true;
       }
       this.position.x += 10 * alienDirection;
-      this.toggleFrame();
+      // this.toggleFrame();
       this.stepAccumulator = 0;
     }
     this.position.y += alienYDown;
@@ -523,15 +544,16 @@ function setupAlienFormation() {
   for (var i = 0, len = 5 * 11; i < len; i++) {
     var gridX = (i % 11);
     var gridY = Math.floor(i / 11);
-    var clipRects;
-    switch (gridY) {
-      case 0:
-      case 1: clipRects = ALIEN_BOTTOM_ROW; break;
-      case 2:
-      case 3: clipRects = ALIEN_MIDDLE_ROW; break;
-      case 4: clipRects = ALIEN_TOP_ROW; break;
-    }
-    aliens.push(new Enemy(clipRects, (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
+//    var clipRects;
+//    switch (gridY) {
+//      case 0:
+//      case 1: clipRects = ALIEN_BOTTOM_ROW; break;
+//      case 2:
+//      case 3: clipRects = ALIEN_MIDDLE_ROW; break;
+//      case 4: clipRects = ALIEN_TOP_ROW; break;
+//    }
+    word = "WORD";
+    aliens.push(new Enemy(word, (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
     alienCount++;
   }
 }

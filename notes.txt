@@ -8,11 +8,12 @@ Class:
   Point2D:
   Rect:
   BaseSprite:
+    TextSprite:
+      Enemy:
     ImgSprite:
       Bullet:
       SheetSprite:
         Player:
-        Enemy:
   ParticleExplosion:
 
 Attributes & Methods:
@@ -33,6 +34,11 @@ Attributes & Methods:
     update(dt)
     _updateBounds()
     _drawImage()
+    draw(resized)
+  TextSprite:
+    word, fontSize, fontColor
+    init(word, x, y, fontSize, fontColor)
+    _drawText()
     draw(resized)
   SheetSprite:
     clipRect
@@ -56,8 +62,8 @@ Attributes & Methods:
     update(dt)
     draw(resized)
   Enemy:
-    clipRects, alive, onFirstState, stepDelay, stepAccumulator, doShoot, bullet
-    init(clipRects, x, y)
+    alive, onFirstState, stepDelay, stepAccumulator, doShoot, bullet
+    init(word, x, y)
     toggleFrame()
     shoot()
     update(dt)
