@@ -637,7 +637,7 @@ function resolveBulletPlayerCollisions() {
         hasGameStarted = false;
       } else {
        alien.bullet.alive = false;
-       particleManager.createExplosion(player.position.x, player.position.y, 'green', 100, 8,8,6,0.001,40);
+       particleManager.createExplosion(player.position.x, player.position.y, 'brown', 100, 8,8,6,0.001,40);
        player.position.set(CANVAS_WIDTH/2, CANVAS_HEIGHT - 70);
        player.lives--;
         break;
