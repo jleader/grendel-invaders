@@ -280,6 +280,8 @@ var Player = ImgSprite.extend({
     this.bullets = [];
     this.bulletDelayAccumulator = 0;
     this.score = 0;
+    this.shooting = false;
+    this.shotTime = 0;
   },
 
   reset: function() {
@@ -291,6 +293,8 @@ var Player = ImgSprite.extend({
   shoot: function() {
     var bullet = new Bullet(this.position.x + this.bounds.w / 2, this.position.y - this.bounds.h / 2, 1, 1000);
     this.bullets.push(bullet);
+    this.shooting = true;
+    this.shotTime = window.performance.now();
   },
 
   handleInput: function() {
@@ -333,6 +337,15 @@ var Player = ImgSprite.extend({
   },
 
   draw: function(resized) {
+    if (this.shooting) {
+      this.img = playerShootImg;
+      if (window.performance.now() - this.shotTime > 250) {
+        this.shooting = false;
+      }
+    }
+    else {
+      this.img = playerNormalImg;
+    }
     this._super(resized);
 
     // draw bullets
@@ -700,7 +713,7 @@ function fillCenteredText(text, x, y, color, fontSize) {
 }
 
 function fillBlinkingText(text, x, y, blinkFreq, color, fontSize) {
-  if (~~(0.5 + Date.now() / blinkFreq) % 2) {
+  if (~~(0.5 + window.performance.now() / blinkFreq) % 2) {
     fillCenteredText(text, x, y, color, fontSize);
   }
 }
