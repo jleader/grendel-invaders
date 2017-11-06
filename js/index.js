@@ -87,7 +87,8 @@
 var IS_CHROME = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 var CANVAS_WIDTH = 640;
 var CANVAS_HEIGHT = 640;
-var SPRITE_SHEET_SRC = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAEACAYAAAADRnAGAAACGUlEQVR42u3aSQ7CMBAEQIsn8P+/hiviAAK8zFIt5QbELiTHmfEYE3L9mZE9AAAAqAVwBQ8AAAD6THY5CgAAAKbfbPX3AQAAYBEEAADAuZrC6UUyfMEEAIBiAN8OePXnAQAAsLcmmKFPAQAAgHMbm+gbr3Sdo/LtcAAAANR6GywPAgBAM4D2JXAAABoBzBjA7AmlOx8AAEAzAOcDAADovTc4vQim6wUCABAYQG8QAADd4dPd2fRVYQAAANQG0B4HAABAawDnAwAA6AXgfAAAALpA2uMAAABwPgAAgPoAM9Ci/R4AAAD2dmqcEQIAIC/AiQGuAAYAAECcRS/a/cJXkUf2AAAAoBaA3iAAALrD+gIAAADY9baX/nwAAADNADwFAADo9YK0e5FMX/UFACA5QPSNEAAAAHKtCekmDAAAAADvBljtfgAAAGgMMGOrunvCy2uCAAAACFU6BwAAwF6AGQPa/XsAAADYB+B8AAAAtU+ItD4OAwAAAFVhAACaA0T7B44/BQAAANALwGMQAAAAADYO8If2+P31AgAAQN0SWbhFDwCAZlXgaO1xAAAA1FngnA8AACAeQPSNEAAAAM4CnC64AAAA4GzN4N9NSfgKEAAAAACszO26X8/X6BYAAAD0Anid8KcLAAAAAAAAAJBnwNEvAAAA9Jns1ygAAAAAAAAAAAAAAAAAAABAQ4COCENERERERERERBrnAa1sJuUVr3rsAAAAAElFTkSuQmCC';
+var PLAYER_NORMAL_SRC = 'img/Grendel.png';
+var PLAYER_SHOOT_SRC = 'img/GrendelTilting.png';
 var LEFT_KEY = 37;
 var RIGHT_KEY = 39;
 var SHOOT_KEY1 = 88; // X
@@ -95,9 +96,6 @@ var SHOOT_KEY2 = 32; // <space>
 var SHOOT_KEY3 = 38; // <up-arrow>
 var TEXT_BLINK_FREQ = 500;
 var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 32 };
-var ALIEN_BOTTOM_ROW = [ { x: 0, y: 0, w: 51, h: 34 }, { x: 0, y: 102, w: 51, h: 34 }];
-var ALIEN_MIDDLE_ROW = [ { x: 0, y: 137, w: 50, h: 33 }, { x: 0, y: 170, w: 50, h: 34 }];
-var ALIEN_TOP_ROW = [ { x: 0, y: 68, w: 50, h: 32 }, { x: 0, y: 34, w: 50, h: 32 }];
 var ALIEN_X_MARGIN = 40;
 var ALIEN_SQUAD_WIDTH = 11 * ALIEN_X_MARGIN;
 
@@ -157,6 +155,13 @@ var Rect = Class.extend({
     this.y = y;
     this.w = w;
     this.h = h;
+  },
+
+  copy: function(r) {
+    this.x = r.x;
+    this.y = r.y;
+    this.w = r.w;
+    this.h = r.h;
   }
 });
 
@@ -168,7 +173,6 @@ var Rect = Class.extend({
 // ###################################################################
 var canvas = null;
 var ctx = null;
-var spriteSheetImg = null;
 var bulletImg = null;
 var keyStates = null;
 var prevKeyStates = null;
@@ -193,7 +197,8 @@ var BaseSprite = Class.extend({
   init: function(x, y, bounds, scale) {
     this.position = new Point2D(x, y);
     this.scale = scale;
-    this.bounds = bounds;
+    this.bounds = new Rect();
+    this.bounds.copy(bounds);
   },
 
   update: function(dt) { },
@@ -254,28 +259,9 @@ var ImgSprite = BaseSprite.extend({
   }
 });
 
-var SheetSprite = ImgSprite.extend({
-  init: function(sheetImg, clipRect, x, y) {
-    this._super(sheetImg, x, y, new Rect(x, y, clipRect.w, clipRect.h));
-    this.clipRect = clipRect;
-  },
-
-  _drawImage: function() {
-    ctx.save();
-    ctx.transform(this.scale.x, 0, 0, this.scale.y, this.position.x, this.position.y);
-    ctx.drawImage(this.img, this.clipRect.x, this.clipRect.y, this.clipRect.w, this.clipRect.h, ~~(0.5 + -this.clipRect.w*0.5), ~~(0.5 + -this.clipRect.h*0.5), this.clipRect.w, this.clipRect.h);
-    ctx.restore();
-
-  },
-
-  draw: function(resized) {
-    this._super(resized);
-  }
-});
-
-var Player = SheetSprite.extend({
+var Player = ImgSprite.extend({
   init: function() {
-    this._super(spriteSheetImg, PLAYER_CLIP_RECT, CANVAS_WIDTH/2, CANVAS_HEIGHT - 70);
+    this._super(playerNormalImg, CANVAS_WIDTH/2, CANVAS_HEIGHT - 70, PLAYER_CLIP_RECT);
     this.scale.set(0.85, 0.85);
     this.lives = 3;
     this.xVel = 0;
@@ -502,9 +488,11 @@ function initCanvas() {
   // turn off image smoothing
   setImageSmoothing(false);
 
-  // create our main sprite sheet img
-  spriteSheetImg = new Image();
-  spriteSheetImg.src = SPRITE_SHEET_SRC;
+  // create our main sprite images
+  playerNormalImg = new Image();
+  playerNormalImg.src = PLAYER_NORMAL_SRC;
+  playerShootImg = new Image();
+  playerShootImg.src = PLAYER_SHOOT_SRC;
   preDrawImages();
 
   // add event listeners and initially resize
@@ -553,14 +541,6 @@ function setupAlienFormation() {
   for (var i = 0, len = 5 * 11; i < len; i++) {
     var gridX = (i % 11);
     var gridY = Math.floor(i / 11);
-//    var clipRects;
-//    switch (gridY) {
-//      case 0:
-//      case 1: clipRects = ALIEN_BOTTOM_ROW; break;
-//      case 2:
-//      case 3: clipRects = ALIEN_MIDDLE_ROW; break;
-//      case 4: clipRects = ALIEN_TOP_ROW; break;
-//    }
     word = "WORD";
     aliens.push(new Enemy(words[i % words.length], (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
     alienCount++;
@@ -708,15 +688,8 @@ function fillBlinkingText(text, x, y, blinkFreq, color, fontSize) {
 }
 
 function drawBottomHud() {
-  ctx.fillStyle = '#02ff12';
-  ctx.fillRect(0, CANVAS_HEIGHT - 30, CANVAS_WIDTH, 2);
   fillText(player.lives + ' x ', 10, CANVAS_HEIGHT - 7.5, 'white', 20);
-  ctx.drawImage(spriteSheetImg, player.clipRect.x, player.clipRect.y, player.clipRect.w,
-                 player.clipRect.h, 45, CANVAS_HEIGHT - 23, player.clipRect.w * 0.5,
-                 player.clipRect.h * 0.5);
-  // fillText('CREDIT: Quinn Leader', CANVAS_WIDTH - 210, CANVAS_HEIGHT - 7.5);
   fillCenteredText('SCORE: ' + player.score, CANVAS_WIDTH/2, 20);
-  // fillBlinkingText('00', CANVAS_WIDTH - 25, CANVAS_HEIGHT - 7.5, TEXT_BLINK_FREQ);
 }
 
 function drawAliens(resized) {
@@ -774,7 +747,7 @@ function resize() {
   var w = window.innerWidth;
   var h = window.innerHeight;
 
-        // calculate the scale factor to keep a correct aspect ratio
+  // calculate the scale factor to keep a correct aspect ratio
   var scaleFactor = Math.min(w / CANVAS_WIDTH, h / CANVAS_HEIGHT);
 
   if (IS_CHROME) {
