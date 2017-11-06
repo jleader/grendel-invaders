@@ -186,7 +186,7 @@ var alienYDown = 0;
 var alienCount = 0;
 var wave = 1;
 var hasGameStarted = false;
-
+var boundingBoxes = false;
 
 
 // ###################################################################
@@ -224,6 +224,12 @@ var TextSprite = BaseSprite.extend({
     ctx.font = this.fontSize + 'px Play';
     ctx.fillStyle = this.fontColor;
     ctx.fillText(this.word, this.position.x, this.position.y);
+
+    if (boundingBoxes) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'white';
+      ctx.strokeRect(this.position.x, this.position.y, this.bounds.w, -this.bounds.h);
+    }
   },
 
   draw: function(resized) {
@@ -245,11 +251,17 @@ var ImgSprite = BaseSprite.extend({
   _updateBounds: function() {
     var w = ~~(0.5 + this.origBounds.w * this.scale.x);
     var h = ~~(0.5 + this.origBounds.h * this.scale.y);
-    this.bounds.set(this.position.x - w/2, this.position.y - h/2, w, h);
+    this.bounds.set(this.position.x, this.position.y - h/2, w, h);
   },
 
   _drawImage: function() {
     ctx.drawImage(this.img, this.position.x, this.position.y);
+
+    if (boundingBoxes) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'white';
+      ctx.strokeRect(this.position.x, this.position.y, this.bounds.w, this.bounds.h);
+    }
   },
 
   draw: function(resized) {
@@ -351,6 +363,12 @@ var Bullet = ImgSprite.extend({
 
   draw: function(resized) {
     this._super(resized);
+
+    if (boundingBoxes) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'white';
+      ctx.strokeRect(this.position.x, this.position.y, this.bounds.w, this.bounds.h);
+    }
   }
 });
 
