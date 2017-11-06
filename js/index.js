@@ -214,7 +214,7 @@ var TextSprite = BaseSprite.extend({
   init: function(word, x, y, fontSize, fontColor) {
     ctx.font = fontSize + 'px Play';
     var metrics = ctx.measureText(word);
-    this._super(x, y, new Rect(x, y, metrics.width, metrics.height), new Point2D(1, 1));
+    this._super(x, y, new Rect(x, y, metrics.width, fontSize), new Point2D(1, 1));
     this.word = word;
     this.fontSize = fontSize;
     this.fontColor = fontColor;
@@ -274,7 +274,7 @@ var ImgSprite = BaseSprite.extend({
 var Player = ImgSprite.extend({
   init: function() {
     this._super(playerNormalImg, CANVAS_WIDTH/2, CANVAS_HEIGHT - 70, PLAYER_CLIP_RECT);
-    this.scale.set(0.85, 0.85);
+    //this.scale.set(0.85, 0.85);
     this.lives = 3;
     this.xVel = 0;
     this.bullets = [];
@@ -289,7 +289,7 @@ var Player = ImgSprite.extend({
   },
 
   shoot: function() {
-    var bullet = new Bullet(this.position.x, this.position.y - this.bounds.h / 2, 1, 1000);
+    var bullet = new Bullet(this.position.x + this.bounds.w / 2, this.position.y - this.bounds.h / 2, 1, 1000);
     this.bullets.push(bullet);
   },
 
@@ -328,7 +328,7 @@ var Player = ImgSprite.extend({
     this.position.x += this.xVel * dt;
 
     // cap player position in screen bounds
-    this.position.x = clamp(this.position.x, this.bounds.w/2, CANVAS_WIDTH - this.bounds.w/2);
+    this.position.x = clamp(this.position.x, 0, CANVAS_WIDTH - this.bounds.w);
     this.updateBullets(dt);
   },
 
