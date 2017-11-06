@@ -229,9 +229,18 @@ var TextSprite = BaseSprite.extend({
 });
 
 var ImgSprite = BaseSprite.extend({
-  init: function(img, x, y) {
-    this._super(x, y, new Rect(x, y, img.width, img.height), new Point2D(1, 1));
+  init: function(img, x, y, bounds) {
+    if (typeof bounds == 'undefined') bounds = new Rect(x, y, img.width, img.height);
+    this._super(x, y, bounds, new Point2D(1, 1));
     this.img = img;
+  },
+
+  update: function(dt) {},
+
+  _updateBounds: function() {
+    var w = ~~(0.5 + this.bounds.w * this.scale.x);
+    var h = ~~(0.5 + this.bounds.h * this.scale.y);
+    this.bounds.set(this.position.x - w/2, this.position.y - h/2, w, h);
   },
 
   _drawImage: function() {
@@ -247,17 +256,8 @@ var ImgSprite = BaseSprite.extend({
 
 var SheetSprite = ImgSprite.extend({
   init: function(sheetImg, clipRect, x, y) {
-    this._super(sheetImg, x, y);
+    this._super(sheetImg, x, y, new Rect(x, y, clipRect.w, clipRect.h));
     this.clipRect = clipRect;
-    this.bounds.set(x, y, this.clipRect.w, this.clipRect.h);
-  },
-
-  update: function(dt) {},
-
-  _updateBounds: function() {
-    var w = ~~(0.5 + this.clipRect.w * this.scale.x);
-    var h = ~~(0.5 + this.clipRect.h * this.scale.y);
-    this.bounds.set(this.position.x - w/2, this.position.y - h/2, w, h);
   },
 
   _drawImage: function() {
