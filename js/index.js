@@ -541,7 +541,15 @@ function initGame() {
 
 function setupAlienFormation() {
   alienCount = 0;
-  var words = ["Now", "is", "the", "time", "for", "all", "good", "men", "to", "come", "to", "the", "aid", "of", "their", "country"];
+  var words = ["Lo", "we", "have", "heard", "the", "honor", "of", "the", "Speardanes", "nation",
+    "kings", "in", "days", "now", "gome", "how", "those", "battle", "lords", "brought", "themselves",
+    "glory", "Oft", "Scyld", "Shefing", "shattered", "the", "forces", "of", "kinsman", "marauders",
+    "dragged", "away", "their", "meadhall", "benches", "terrified", "earls", "after", "first", "men",
+    "found", "him", "castaway", "He", "got", "recompense", "for", "that", "He", "grew", "up",
+    "under", "the", "clouds", "won", "glory", "of", "men", "till", "all", "his", "enemies",
+    "sitting", "around", "him", "heard", "across", "the", "whaleroads", "his", "demands", "and",
+    "gave", "him", "tribute", "That", "was", "a", "good", "king"
+  ];
   for (var i = 0, len = 5 * 11; i < len; i++) {
     var gridX = (i % 11);
     var gridY = Math.floor(i / 11);
