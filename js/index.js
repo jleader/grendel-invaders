@@ -89,13 +89,15 @@ var CANVAS_WIDTH = 640;
 var CANVAS_HEIGHT = 640;
 var PLAYER_NORMAL_SRC = 'img/Grendel.png';
 var PLAYER_SHOOT_SRC = 'img/GrendelTilting.png';
+var PLAYER_FLIP_NORMAL_SRC = 'img/GrendelFlip.png';
+var PLAYER_FLIP_SHOOT_SRC = 'img/GrendelTiltingFlip.png';
 var LEFT_KEY = 37;
 var RIGHT_KEY = 39;
 var SHOOT_KEY1 = 88; // X
 var SHOOT_KEY2 = 32; // <space>
 var SHOOT_KEY3 = 38; // <up-arrow>
 var TEXT_BLINK_FREQ = 500;
-var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 32 };
+var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 64 };
 var ALIEN_X_MARGIN = 40;
 var ALIEN_SQUAD_WIDTH = 11 * ALIEN_X_MARGIN;
 
@@ -255,7 +257,7 @@ var ImgSprite = BaseSprite.extend({
   },
 
   _drawImage: function() {
-    ctx.drawImage(this.img, this.position.x, this.position.y);
+    ctx.drawImage(this.img, this.position.x, this.position.y, this.origBounds.w, this.origBounds.h);
 
     if (boundingBoxes) {
       ctx.lineWidth = 3;
@@ -276,6 +278,7 @@ var Player = ImgSprite.extend({
     this._super(playerNormalImg, CANVAS_WIDTH/2, CANVAS_HEIGHT - 70, PLAYER_CLIP_RECT);
     //this.scale.set(0.85, 0.85);
     this.lives = 3;
+    this.left = false;
     this.xVel = 0;
     this.bullets = [];
     this.bulletDelayAccumulator = 0;
@@ -300,8 +303,10 @@ var Player = ImgSprite.extend({
   handleInput: function() {
     if (isKeyDown(LEFT_KEY)) {
       this.xVel = -175;
+      this.left = true;
     } else if (isKeyDown(RIGHT_KEY)) {
       this.xVel = 175;
+      this.left = false;
     } else this.xVel = 0;
 
     if (wasKeyPressed(SHOOT_KEY1) || wasKeyPressed(SHOOT_KEY2) || wasKeyPressed(SHOOT_KEY3)) {
@@ -338,13 +343,13 @@ var Player = ImgSprite.extend({
 
   draw: function(resized) {
     if (this.shooting) {
-      this.img = playerShootImg;
+      this.img = this.left ? playerFlipShootImg : playerShootImg;
       if (window.performance.now() - this.shotTime > 250) {
         this.shooting = false;
       }
     }
     else {
-      this.img = playerNormalImg;
+      this.img = this.left ? playerFlipNormalImg : playerNormalImg;
     }
     this._super(resized);
 
@@ -522,8 +527,12 @@ function initCanvas() {
   // create our main sprite images
   playerNormalImg = new Image();
   playerNormalImg.src = PLAYER_NORMAL_SRC;
+  playerFlipNormalImg = new Image();
+  playerFlipNormalImg.src = PLAYER_FLIP_NORMAL_SRC;
   playerShootImg = new Image();
   playerShootImg.src = PLAYER_SHOOT_SRC;
+  playerFlipShootImg = new Image();
+  playerFlipShootImg.src = PLAYER_FLIP_SHOOT_SRC;
   preDrawImages();
 
   // add event listeners and initially resize
