@@ -230,16 +230,16 @@ var TextSprite = BaseSprite.extend({
 
 var ImgSprite = BaseSprite.extend({
   init: function(img, x, y, bounds) {
-    if (typeof bounds == 'undefined') bounds = new Rect(x, y, img.width, img.height);
     this._super(x, y, bounds, new Point2D(1, 1));
     this.img = img;
+    this.origBounds = new Rect(bounds.x, bounds.y, bounds.w, bounds.h);
   },
 
   update: function(dt) {},
 
   _updateBounds: function() {
-    var w = ~~(0.5 + this.bounds.w * this.scale.x);
-    var h = ~~(0.5 + this.bounds.h * this.scale.y);
+    var w = ~~(0.5 + this.origBounds.w * this.scale.x);
+    var h = ~~(0.5 + this.origBounds.h * this.scale.y);
     this.bounds.set(this.position.x - w/2, this.position.y - h/2, w, h);
   },
 
@@ -349,7 +349,7 @@ var Player = SheetSprite.extend({
 
 var Bullet = ImgSprite.extend({
   init: function(x, y, direction, speed) {
-    this._super(bulletImg, x, y);
+    this._super(bulletImg, x, y, new Rect(x, y, bulletImg.width, bulletImg.height));
     this.direction = direction;
     this.speed = speed;
     this.alive = true;
