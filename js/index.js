@@ -96,6 +96,7 @@ var RIGHT_KEY = 39;
 var SHOOT_KEY1 = 88; // X
 var SHOOT_KEY2 = 32; // <space>
 var SHOOT_KEY3 = 38; // <up-arrow>
+var DEBUG_KEY = 68; // D
 var TEXT_BLINK_FREQ = 500;
 var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 64 };
 var ALIEN_X_MARGIN = 40;
@@ -308,6 +309,10 @@ var Player = ImgSprite.extend({
       this.xVel = 175;
       this.left = false;
     } else this.xVel = 0;
+
+    if (wasKeyPressed(DEBUG_KEY)) {
+      boundingBoxes = !boundingBoxes;
+    }
 
     if (wasKeyPressed(SHOOT_KEY1) || wasKeyPressed(SHOOT_KEY2) || wasKeyPressed(SHOOT_KEY3)) {
       if (this.bulletDelayAccumulator > 0.5) {
