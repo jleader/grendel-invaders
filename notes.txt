@@ -40,6 +40,11 @@ Attributes & Methods:
     init(word, x, y, fontSize, fontColor)
     _drawText()
     draw(resized)
+  ImgSprite:
+    img
+    init(img, x, y)
+    _drawImage()
+    draw(resized)
   SheetSprite:
     clipRect
     init(sheetImg, clipRect, x, y)
